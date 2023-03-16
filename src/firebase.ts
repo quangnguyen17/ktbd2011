@@ -20,7 +20,9 @@ if (getApps().length === 0) {
 
 const storage = getStorage()
 
-export const getBooks = async (testament: 'old-testament' | 'new-testament'): Promise<string[]> => {
+export type TestamentName = 'old-testament' | 'new-testament'
+
+export const getBooks = async (testament: TestamentName): Promise<string[]> => {
   const data = await listAll(ref(storage, testament))
   let sortedBooks = [...data.items]
   sortedBooks.sort((ref1, ref2) => {
@@ -31,13 +33,11 @@ export const getBooks = async (testament: 'old-testament' | 'new-testament'): Pr
   return Promise.all(sortedBooks.map((book) => getDownloadURL(book)))
 }
 
-export const useTestament = (testament: 'old-testament' | 'new-testament') => {
+export const useTestament = (testament: TestamentName) => {
   const [books, setBooks] = useState<string[]>([])
-
   useEffect(() => {
     getBooks(testament).then((books) => setBooks(books))
   }, [testament])
-
   return books
 }
 

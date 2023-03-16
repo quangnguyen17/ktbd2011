@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { Accordion, Spinner } from 'react-bootstrap'
 import { Chapter } from './types'
+import { useTestament, TestamentName } from './firebase'
 
 const Loader: React.FC = () => (
   <Spinner animation="border" size="sm" style={{ color: 'rgb(101, 9, 9)' }} />
@@ -67,12 +68,14 @@ const TestamentBook: React.FC<{ downloadUrl: string; index: number }> = ({
   )
 }
 
-const Testament: React.FC<{ books: string[] }> = ({ books }) => (
-  <Accordion>
-    {books.map((downloadUrl, index) => (
-      <TestamentBook key={index} index={index} downloadUrl={downloadUrl} />
-    ))}
-  </Accordion>
-)
-
+const Testament: React.FC<{ testament: TestamentName }> = ({ testament }) => {
+  const books = useTestament(testament)
+  return (
+    <Accordion>
+      {books.map((downloadUrl, index) => (
+        <TestamentBook key={index} index={index} downloadUrl={downloadUrl} />
+      ))}
+    </Accordion>
+  )
+}
 export default Testament
