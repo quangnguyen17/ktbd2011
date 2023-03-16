@@ -1,27 +1,24 @@
-import React from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 import { Navbar, Nav } from 'react-bootstrap'
 import Testament from './Testament'
 import { useTestament } from './firebase'
 
-const CuuUoc: React.FC = () => {
+const CuuUoc = () => {
   const books = useTestament('old-testament')
   return <Testament books={books} />
 }
 
-const TanUoc: React.FC = () => {
+const TanUoc = () => {
   const books = useTestament('new-testament')
   return <Testament books={books} />
 }
 
-const SharedNav: React.FC = () => {
+const SharedNav = () => {
   const navigate = useNavigate()
   return (
-    <Navbar variant="dark" expand="sm" className="bg-darkRed py-2 px-3">
+    <Navbar variant="dark" expand="sm" className="bg-darkRed py-2 px-3" fixed="top">
       <Navbar.Brand>
-        <Nav.Link onClick={() => navigate('/')}>
-          <h1 style={{ margin: 0 }}>Kinh Thánh BD2011</h1>
-        </Nav.Link>
+        <Nav.Link onClick={() => navigate('/')}>Kinh Thánh BD2011</Nav.Link>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
@@ -34,7 +31,7 @@ const SharedNav: React.FC = () => {
   )
 }
 
-const AboutBD2011: React.FC = () => (
+const AboutBD2011 = () => (
   <div style={{ padding: '1rem' }}>
     <p>
       Kính chào quý độc giả: Cảm ơn quý vị đã chọn và đọc Kinh Thánh qua Bản Dịch 2011 này. Trước
@@ -50,22 +47,23 @@ const AboutBD2011: React.FC = () => (
       <br />
       Nay kính.
       <br />
-      Mục sư Đặng Ngọc Báu
+      MS Đặng Ngọc Báu
       <br />
       kinhthanhbd2011@gmail.com
     </p>
   </div>
 )
 
-const App: React.FC = () => (
-  <>
-    <SharedNav />
-    <Routes>
-      <Route path="/" element={<AboutBD2011 />} />
-      <Route path="/cuu-uoc" element={<CuuUoc />} />
-      <Route path="/tan-uoc" element={<TanUoc />} />
-    </Routes>
-  </>
-)
-
-export default App
+export default function App() {
+  return (
+    <>
+      <SharedNav />
+      <div style={{ height: '56px' }}></div>
+      <Routes>
+        <Route path="/" element={<AboutBD2011 />} />
+        <Route path="/cuu-uoc" element={<CuuUoc />} />
+        <Route path="/tan-uoc" element={<TanUoc />} />
+      </Routes>
+    </>
+  )
+}
