@@ -26,6 +26,8 @@ const Home = () => (
 )
 
 export default function App() {
+  const isCuuUoc = window.location.pathname === '/cuu-uoc'
+  const isTanUoc = window.location.pathname === '/tan-uoc'
   return (
     <>
       <Navbar variant="dark" expand="sm" fixed="top" className="bg-darkRed py-2 px-3">
@@ -35,8 +37,12 @@ export default function App() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
-            <Nav.Link href="/cuu-uoc">Cựu Ước</Nav.Link>
-            <Nav.Link href="/tan-uoc">Tân Ước</Nav.Link>
+            <Nav.Link href="/cuu-uoc" active={isCuuUoc} disabled={isCuuUoc}>
+              Cựu Ước
+            </Nav.Link>
+            <Nav.Link href="/tan-uoc" active={isTanUoc} disabled={isTanUoc}>
+              Tân Ước
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
