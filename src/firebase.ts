@@ -1,7 +1,6 @@
-import axios from 'axios'
+import { useState, useEffect } from 'react'
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app'
 import { getStorage, ref, listAll, getDownloadURL } from 'firebase/storage'
-import { Book } from './types'
 
 let app: FirebaseApp
 
@@ -21,25 +20,23 @@ if (getApps().length === 0) {
 
 const storage = getStorage()
 
-export const getBooks = async (testament: string): Promise<Book[]> => {
-  let books: Book[] = []
-  let data = await listAll(ref(storage, testament))
-
-  // sorting
-  let sortedItems = [...data.items]
-  sortedItems.sort((ref1, ref2) => {
+export const getBooks = async (testament: 'old-testament' | 'new-testament'): Promise<string[]> => {
+  const data = await listAll(ref(storage, testament))
+  let sortedBooks = [...data.items]
+  sortedBooks.sort((ref1, ref2) => {
     let r1 = ref1.name.split('.')[0]
     let r2 = ref2.name.split('.')[0]
     return +r1 - +r2
   })
+  return Promise.all(sortedBooks.map((book) => getDownloadURL(book)))
+}
 
-  // fetching
-  for (let book of sortedItems) {
-    const downloadUrl = await getDownloadURL(book)
-    for (let [book, chapters] of Object.entries((await axios.get(downloadUrl)).data as { [key: string]: any[] })) {
-      books.push({ book, chapters })
-    }
-  }
+export const useTestament = (testament: 'old-testament' | 'new-testament') => {
+  const [books, setBooks] = useState<string[]>([])
+
+  useEffect(() => {
+    getBooks(testament).then((books) => setBooks(books))
+  }, [testament])
 
   return books
 }
