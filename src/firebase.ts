@@ -25,11 +25,7 @@ export type TestamentName = 'old-testament' | 'new-testament'
 export const getBooks = async (testament: TestamentName): Promise<string[]> => {
   const data = await listAll(ref(storage, testament))
   let sortedBooks = [...data.items]
-  sortedBooks.sort((ref1, ref2) => {
-    let r1 = ref1.name.split('.')[0]
-    let r2 = ref2.name.split('.')[0]
-    return +r1 - +r2
-  })
+  sortedBooks.sort((r1, r2) => Number(r1.name.split('.')[0]) - Number(r2.name.split('.')[0]))
   return Promise.all(sortedBooks.map((book) => getDownloadURL(book)))
 }
 

@@ -1,55 +1,42 @@
 import React from 'react'
 import axios from 'axios'
-import { Accordion, Spinner } from 'react-bootstrap'
-import { Chapter } from './types'
+import { Accordion } from 'react-bootstrap'
 import { useTestament, TestamentName } from './firebase'
 
-const Loader: React.FC = () => (
-  <Spinner animation="border" size="sm" style={{ color: 'rgb(101, 9, 9)' }} />
-)
-
-const Paragraphs: React.FC<{ chapter: Chapter }> = ({ chapter }) => (
-  <>
+const Paragraphs: React.FC<{ chapter: Array<Record<string, string>> }> = ({ chapter }) => (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
     {chapter.map((paragraph, idx) => (
-      <div key={idx} className="pb-3">
+      <div key={idx}>
         {Object.entries(paragraph).map(([key, val], idx) => (
           <div key={idx}>
-            <h3 style={{ fontSize: '1.5rem' }} className="mb-2">
-              {key}
-            </h3>
-            <p style={{ fontSize: '1rem' }} className="mb-0">
-              {val}
-            </p>
+            <h5 style={{ marginBottom: '0.75rem' }}>{key}</h5>
+            <p style={{ marginBottom: '0' }}>{val}</p>
           </div>
         ))}
       </div>
     ))}
-  </>
+  </div>
 )
 
 const TestamentBook: React.FC<{ downloadUrl: string; index: number }> = ({
   downloadUrl,
   index,
 }) => {
-  const [loading, setLoading] = React.useState(true)
   const [title, setTitle] = React.useState('')
   const [chapters, setChapters] = React.useState<any[]>([])
   React.useEffect(() => {
     ;(async () => {
-      const res = await axios.get<Record<string, any[]>>(downloadUrl)
-      for (let [book, chapters] of Object.entries(res.data)) {
+      for (let [book, chapters] of Object.entries(
+        (await axios.get<Record<string, any[]>>(downloadUrl)).data
+      )) {
         setTitle(book)
         setChapters(chapters)
       }
-      setLoading(false)
     })()
   }, [downloadUrl])
   return (
     <Accordion.Item eventKey={index.toString()} style={{ borderRadius: 0 }}>
-      <Accordion.Header>
-        {title}
-        {loading && <Loader />}
-      </Accordion.Header>
+      <Accordion.Header>{title}</Accordion.Header>
       <Accordion.Body className="m-0 p-0">
         <Accordion flush>
           {chapters.map((chapter, idx) => (
