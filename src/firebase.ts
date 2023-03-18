@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import axios from 'axios'
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app'
 import { getStorage, ref, listAll, getDownloadURL } from 'firebase/storage'
 
@@ -22,19 +22,30 @@ const storage = getStorage()
 
 export type TestamentName = 'old-testament' | 'new-testament'
 
-export const getBooks = async (testament: TestamentName): Promise<string[]> => {
-  const data = await listAll(ref(storage, testament))
-  let sortedBooks = [...data.items]
-  sortedBooks.sort((r1, r2) => Number(r1.name.split('.')[0]) - Number(r2.name.split('.')[0]))
-  return Promise.all(sortedBooks.map((book) => getDownloadURL(book)))
+const getSchema = async (testament: TestamentName) => {
+  let sortedRefs = [...(await listAll(ref(storage, testament))).items]
+  sortedRefs.sort((r1, r2) => Number(r1.name.split('.')[0]) - Number(r2.name.split('.')[0]))
+  return { [testament]: sortedRefs.map((ref) => ref.fullPath) }
 }
 
-export const useTestament = (testament: TestamentName) => {
-  const [books, setBooks] = useState<string[]>([])
-  useEffect(() => {
-    getBooks(testament).then((books) => setBooks(books))
-  }, [testament])
-  return books
+export const getLatestSchema = async () => ({
+  ...(await getSchema('old-testament')),
+  ...(await getSchema('new-testament')),
+})
+
+// getLatestSchema().then((schema) => console.log(schema))
+
+export const getBook = async (filePath: string) => {
+  const downloadUrl = await getDownloadURL(ref(storage, filePath))
+  let title: string = ''
+  let chapters: Array<Record<string, any>> = []
+  for (let [bTitle, bChapters] of Object.entries(
+    (await axios.get<Record<string, any[]>>(downloadUrl)).data
+  )) {
+    title = bTitle
+    chapters = bChapters
+  }
+  return { title, chapters }
 }
 
 export default app

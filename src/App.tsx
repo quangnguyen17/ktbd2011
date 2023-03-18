@@ -26,17 +26,19 @@ const Home = () => (
 )
 
 export default function App() {
-  const isCuuUoc = window.location.pathname === '/cuu-uoc'
-  const isTanUoc = window.location.pathname === '/tan-uoc'
+  const currentPath = window.location.pathname
+  const isHome = currentPath === '/'
+  const isCuuUoc = currentPath === '/cuu-uoc'
+  const isTanUoc = currentPath === '/tan-uoc'
   return (
     <>
-      <Navbar variant="dark" expand="sm" fixed="top" className="bg-darkRed py-2 px-3">
-        <Navbar.Brand>
-          <Nav.Link href="/">Kinh Thánh BD2011</Nav.Link>
-        </Navbar.Brand>
+      <Navbar variant="dark" expand="sm" fixed="top" className="bg-darkRed px-2">
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">
+          <Nav className="me-auto">
+            <Nav.Link href="/" active={isHome} disabled={isHome}>
+              Kinh Thánh BD2011
+            </Nav.Link>
             <Nav.Link href="/cuu-uoc" active={isCuuUoc} disabled={isCuuUoc}>
               Cựu Ước
             </Nav.Link>

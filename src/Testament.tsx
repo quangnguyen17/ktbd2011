@@ -1,7 +1,7 @@
 import React from 'react'
-import axios from 'axios'
 import { Accordion } from 'react-bootstrap'
-import { useTestament, TestamentName } from './firebase'
+import { TestamentName, getBook } from './firebase'
+import { schema } from './schema'
 
 const Paragraphs: React.FC<{ chapter: Array<Record<string, string>> }> = ({ chapter }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -18,22 +18,15 @@ const Paragraphs: React.FC<{ chapter: Array<Record<string, string>> }> = ({ chap
   </div>
 )
 
-const TestamentBook: React.FC<{ downloadUrl: string; index: number }> = ({
-  downloadUrl,
-  index,
-}) => {
+const TestamentBook: React.FC<{ index: number; filePath: string }> = ({ index, filePath }) => {
   const [title, setTitle] = React.useState('')
   const [chapters, setChapters] = React.useState<any[]>([])
   React.useEffect(() => {
-    ;(async () => {
-      for (let [book, chapters] of Object.entries(
-        (await axios.get<Record<string, any[]>>(downloadUrl)).data
-      )) {
-        setTitle(book)
-        setChapters(chapters)
-      }
-    })()
-  }, [downloadUrl])
+    getBook(filePath).then((data) => {
+      setTitle(data.title)
+      setChapters(data.chapters)
+    })
+  }, [filePath])
   return (
     <Accordion.Item eventKey={index.toString()} style={{ borderRadius: 0 }}>
       <Accordion.Header>{title}</Accordion.Header>
@@ -55,14 +48,12 @@ const TestamentBook: React.FC<{ downloadUrl: string; index: number }> = ({
   )
 }
 
-const Testament: React.FC<{ testament: TestamentName }> = ({ testament }) => {
-  const books = useTestament(testament)
-  return (
-    <Accordion>
-      {books.map((downloadUrl, index) => (
-        <TestamentBook key={index} index={index} downloadUrl={downloadUrl} />
-      ))}
-    </Accordion>
-  )
-}
+const Testament: React.FC<{ testament: TestamentName }> = ({ testament }) => (
+  <Accordion>
+    {schema[testament].map((filePath, index) => (
+      <TestamentBook key={index} index={index} filePath={filePath} />
+    ))}
+  </Accordion>
+)
+
 export default Testament
