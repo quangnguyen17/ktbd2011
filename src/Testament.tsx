@@ -1,6 +1,6 @@
 import React from 'react'
 import { Accordion } from 'react-bootstrap'
-import { TestamentName, getBook } from './firebase'
+import { TestamentName, useBook } from './firebase'
 import { schema } from './schema'
 
 const Paragraphs: React.FC<{ chapter: Array<Record<string, string>> }> = ({ chapter }) => (
@@ -19,14 +19,7 @@ const Paragraphs: React.FC<{ chapter: Array<Record<string, string>> }> = ({ chap
 )
 
 const TestamentBook: React.FC<{ index: number; filePath: string }> = ({ index, filePath }) => {
-  const [title, setTitle] = React.useState('')
-  const [chapters, setChapters] = React.useState<any[]>([])
-  React.useEffect(() => {
-    getBook(filePath).then((data) => {
-      setTitle(data.title)
-      setChapters(data.chapters)
-    })
-  }, [filePath])
+  const { title, chapters } = useBook(filePath)
   return (
     <Accordion.Item eventKey={index.toString()} style={{ borderRadius: 0 }}>
       <Accordion.Header>{title}</Accordion.Header>
@@ -48,12 +41,12 @@ const TestamentBook: React.FC<{ index: number; filePath: string }> = ({ index, f
   )
 }
 
-const Testament: React.FC<{ testament: TestamentName }> = ({ testament }) => (
-  <Accordion>
-    {schema[testament].map((filePath, index) => (
-      <TestamentBook key={index} index={index} filePath={filePath} />
-    ))}
-  </Accordion>
-)
-
-export default Testament
+export default function Testament({ testament }: { testament: TestamentName }): JSX.Element {
+  return (
+    <Accordion>
+      {schema[testament].map((filePath, index) => (
+        <TestamentBook key={index} index={index} filePath={filePath} />
+      ))}
+    </Accordion>
+  )
+}

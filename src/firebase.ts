@@ -1,3 +1,4 @@
+import React from 'react'
 import axios from 'axios'
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app'
 import { getStorage, ref, listAll, getDownloadURL } from 'firebase/storage'
@@ -21,6 +22,7 @@ if (getApps().length === 0) {
 const storage = getStorage()
 
 export type TestamentName = 'old-testament' | 'new-testament'
+export type Chapter = Record<string, any>
 
 const getSchema = async (testament: TestamentName) => {
   let sortedRefs = [...(await listAll(ref(storage, testament))).items]
@@ -38,13 +40,24 @@ export const getLatestSchema = async () => ({
 export const getBook = async (filePath: string) => {
   const downloadUrl = await getDownloadURL(ref(storage, filePath))
   let title: string = ''
-  let chapters: Array<Record<string, any>> = []
-  for (let [bTitle, bChapters] of Object.entries(
-    (await axios.get<Record<string, any[]>>(downloadUrl)).data
-  )) {
+  let chapters: Array<Chapter> = []
+  const { data } = await axios.get<Chapter>(downloadUrl)
+  for (let [bTitle, bChapters] of Object.entries(data)) {
     title = bTitle
     chapters = bChapters
   }
+  return { title, chapters }
+}
+
+export const useBook = (filePath: string) => {
+  const [title, setTitle] = React.useState('')
+  const [chapters, setChapters] = React.useState<Array<Chapter>>([])
+  React.useEffect(() => {
+    getBook(filePath).then((data) => {
+      setTitle(data.title)
+      setChapters(data.chapters)
+    })
+  }, [filePath])
   return { title, chapters }
 }
 

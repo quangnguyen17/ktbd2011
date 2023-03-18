@@ -1,8 +1,9 @@
+import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Navbar, Nav } from 'react-bootstrap'
 import Testament from './Testament'
 
-const Home = () => (
+const Home: React.FC = () => (
   <div className="p-3">
     <p>
       Kính chào quý độc giả: Cảm ơn quý vị đã chọn và đọc Kinh Thánh qua Bản Dịch 2011 này. Trước
@@ -25,7 +26,7 @@ const Home = () => (
   </div>
 )
 
-export default function App() {
+export default function App(): JSX.Element {
   const currentPath = window.location.pathname
   const isHome = currentPath === '/'
   const isCuuUoc = currentPath === '/cuu-uoc'
