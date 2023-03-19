@@ -1,4 +1,4 @@
-export const schema = {
+export const dataSource = {
   'old-testament': [
     'old-testament/1. SÁNG THẾ.JSON',
     'old-testament/2. XUẤT HÀNH.JSON',

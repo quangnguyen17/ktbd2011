@@ -1,7 +1,7 @@
 import React from 'react'
 import { Accordion } from 'react-bootstrap'
-import { TestamentName, useBook } from './firebase'
-import { schema } from './schema'
+import { TestamentName, useBook } from './hooks'
+import { dataSource } from './dataSource'
 
 const Paragraphs: React.FC<{ chapter: Array<Record<string, string>> }> = ({ chapter }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -42,9 +42,10 @@ const TestamentBook: React.FC<{ index: number; filePath: string }> = ({ index, f
 }
 
 export default function Testament({ testament }: { testament: TestamentName }): JSX.Element {
+  const data = dataSource[testament]
   return (
     <Accordion>
-      {schema[testament].map((filePath, index) => (
+      {data.map((filePath, index) => (
         <TestamentBook key={index} index={index} filePath={filePath} />
       ))}
     </Accordion>
