@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React from 'react'
 import axios from 'axios'
 
 export type Chapter = Record<string, any>
@@ -21,13 +21,9 @@ export const getBook = async (filePath: string): Promise<Book> => {
 }
 
 export const useBook = (filePath: string) => {
-  const [title, setTitle] = useState('')
-  const [chapters, setChapters] = useState<Array<Chapter>>([])
-  useEffect(() => {
-    getBook(filePath).then((data) => {
-      setTitle(data.title)
-      setChapters(data.chapters)
-    })
+  const [book, setBook] = React.useState<Book>({ title: '', chapters: [] })
+  React.useEffect(() => {
+    getBook(filePath).then((b) => setBook(b))
   }, [filePath])
-  return { title, chapters }
+  return book
 }
