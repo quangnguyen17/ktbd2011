@@ -1,3 +1,7 @@
+:root {
+  --darkRed: rgb(101, 9, 9);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -15,6 +19,6 @@ body {
 }
 
 .bg-darkRed {
-  background-color: rgb(101, 9, 9);
+  background-color: var(--darkRed);
   border: none;
 }
