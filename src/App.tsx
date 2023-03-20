@@ -6,11 +6,9 @@ type AboutPageMenuProps = { open: boolean; onClose: () => void }
 const AboutPageMenu: React.FC<AboutPageMenuProps> = ({ open, onClose }) => (
   <Offcanvas show={open} onHide={onClose}>
     <Offcanvas.Header closeButton>
-      <Offcanvas.Title>
-        <h1 className="mb-0">Kinh Thánh BD2011</h1>
-      </Offcanvas.Title>
+      <Offcanvas.Title>Kinh Thánh BD2011</Offcanvas.Title>
     </Offcanvas.Header>
-    <Offcanvas.Body>
+    <Offcanvas.Body className="pt-0">
       <Alert variant="info" className="rounded-0">
         <p className="mb-0">
           • Nếu các bạn muốn có trên iOS (như là iPhone, iPad,...) thì vui lòng tải xuống và sử dụng{' '}
@@ -36,7 +34,7 @@ const AboutPageMenu: React.FC<AboutPageMenuProps> = ({ open, onClose }) => (
           cho Android.
         </p>
       </Alert>
-      <p>
+      <p className="mb-0">
         Kính chào quý độc giả: Cảm ơn quý vị đã chọn và đọc Kinh Thánh qua Bản Dịch 2011 này. Trước
         hết chúng tôi xin cảm ơn một số quý đôc giả đã cho chúng tôi những lời góp ý rất quý báu.
         Chúng tôi rất hoan hỉ ghi nhận và tiếp tục cải thiện để bản dịch Kinh Thánh này phản ánh
