@@ -44,7 +44,8 @@ const AccordionBook: React.FC<AccordionBookProps> = ({ index, filePath }) => {
 }
 
 type T = keyof typeof dataSource
-export default function Testament({ testament }: { testament: T }): JSX.Element {
+export type TestamentProps = { testament: T }
+export default function Testament({ testament }: TestamentProps): JSX.Element {
   const data = dataSource[testament]
   return (
     <Accordion>
