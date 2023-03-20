@@ -1,9 +1,10 @@
 import React from 'react'
 import { Accordion } from 'react-bootstrap'
-import { TestamentName, useBook } from './hooks'
+import { useBook, Chapter } from './hooks'
 import { dataSource } from './dataSource'
 
-const Paragraphs: React.FC<{ chapter: Array<Record<string, string>> }> = ({ chapter }) => (
+type ParagraphsProps = { chapter: Array<Chapter> }
+const Paragraphs: React.FC<ParagraphsProps> = ({ chapter }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
     {chapter.map((paragraph, idx) => (
       <div key={idx}>
@@ -18,7 +19,8 @@ const Paragraphs: React.FC<{ chapter: Array<Record<string, string>> }> = ({ chap
   </div>
 )
 
-const TestamentBook: React.FC<{ index: number; filePath: string }> = ({ index, filePath }) => {
+type AccordionBookProps = { index: number; filePath: string }
+const AccordionBook: React.FC<AccordionBookProps> = ({ index, filePath }) => {
   const { title, chapters } = useBook(filePath)
   return (
     <Accordion.Item eventKey={index.toString()} style={{ borderRadius: 0 }}>
@@ -41,12 +43,13 @@ const TestamentBook: React.FC<{ index: number; filePath: string }> = ({ index, f
   )
 }
 
-export default function Testament({ testament }: { testament: TestamentName }): JSX.Element {
+type T = keyof typeof dataSource
+export default function Testament({ testament }: { testament: T }): JSX.Element {
   const data = dataSource[testament]
   return (
     <Accordion>
       {data.map((filePath, index) => (
-        <TestamentBook key={index} index={index} filePath={filePath} />
+        <AccordionBook key={index} index={index} filePath={filePath} />
       ))}
     </Accordion>
   )

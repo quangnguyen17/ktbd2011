@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Navbar, Nav } from 'react-bootstrap'
 import Testament from './Testament'
 
@@ -26,30 +26,39 @@ const Home: React.FC = () => (
   </div>
 )
 
-export default function App(): JSX.Element {
-  const currentPath = window.location.pathname
-  const isHome = currentPath === '/'
-  const isCuuUoc = currentPath === '/cuu-uoc'
-  const isTanUoc = currentPath === '/tan-uoc'
+const Navigation: React.FC = () => {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const isHome = location.pathname === '/'
+  const isCuuUoc = location.pathname === '/cuu-uoc'
+  const isTanUoc = location.pathname === '/tan-uoc'
   return (
     <>
       <Navbar variant="dark" expand="sm" fixed="top" className="bg-darkRed px-2">
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="/" active={isHome} disabled={isHome}>
+            <Nav.Link onClick={() => navigate('/')} active={isHome} disabled={isHome}>
               Kinh Thánh BD2011
             </Nav.Link>
-            <Nav.Link href="/cuu-uoc" active={isCuuUoc} disabled={isCuuUoc}>
+            <Nav.Link onClick={() => navigate('/cuu-uoc')} active={isCuuUoc} disabled={isCuuUoc}>
               Cựu Ước
             </Nav.Link>
-            <Nav.Link href="/tan-uoc" active={isTanUoc} disabled={isTanUoc}>
+            <Nav.Link onClick={() => navigate('/tan-uoc')} active={isTanUoc} disabled={isTanUoc}>
               Tân Ước
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
       <div style={{ height: '56px' }}></div>
+    </>
+  )
+}
+
+export default function App(): JSX.Element {
+  return (
+    <>
+      <Navigation />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/cuu-uoc" element={<Testament testament="old-testament" />} />
