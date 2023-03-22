@@ -1,13 +1,12 @@
 import React from 'react'
 import axios from 'axios'
+import { dataSource } from './dataSource'
 
 export type Chapter = Record<string, any>
 export type Book = { title: string; chapters: Array<Chapter> }
 
 export const getBook = async (filePath: string): Promise<Book> => {
   const key = encodeURIComponent(filePath)
-  const cached = sessionStorage.getItem(key)
-  if (cached) return JSON.parse(cached) as Book
   const book: Book = { title: '', chapters: [] }
   const { data } = await axios.get<Chapter>(
     `https://storage.googleapis.com/bd2011-d9afc.appspot.com/${key}`
@@ -16,14 +15,23 @@ export const getBook = async (filePath: string): Promise<Book> => {
     book.title = title
     book.chapters = chapters
   }
-  sessionStorage.setItem(key, JSON.stringify(book))
   return book
 }
 
-export const useBook = (filePath: string) => {
-  const [book, setBook] = React.useState<Book>({ title: '', chapters: [] })
+export type Testament = keyof typeof dataSource
+export const getTestament = (testament: Testament) =>
+  Promise.all(dataSource[testament].map((filePath) => getBook(filePath)))
+
+export const useBooks = (testament: Testament) => {
+  const [oldTestament, setOldTestament] = React.useState<Array<Book>>([])
+  const [newTestament, setNewTestament] = React.useState<Array<Book>>([])
   React.useEffect(() => {
-    getBook(filePath).then((b) => setBook(b))
-  }, [filePath])
-  return book
+    getTestament('old-testament').then((t) => setOldTestament(t))
+    getTestament('new-testament').then((t) => setNewTestament(t))
+  }, [])
+  const data = React.useMemo<Book[]>(
+    () => (testament === 'old-testament' ? oldTestament : newTestament),
+    [testament, oldTestament, newTestament]
+  )
+  return { data, oldTestament, newTestament }
 }

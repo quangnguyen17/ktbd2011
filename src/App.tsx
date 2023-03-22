@@ -1,12 +1,13 @@
 import React from 'react'
 import { Navbar, Nav, Alert, Offcanvas } from 'react-bootstrap'
-import Testament, { TestamentProps } from './Testament'
+import Books from './Books'
+import { useBooks, Testament } from './hooks'
 
 type AboutPageMenuProps = { open: boolean; onClose: () => void }
 const AboutPageMenu: React.FC<AboutPageMenuProps> = ({ open, onClose }) => (
   <Offcanvas show={open} onHide={onClose}>
     <Offcanvas.Header closeButton>
-      <Offcanvas.Title>Kinh Thánh BD2011</Offcanvas.Title>
+      <Offcanvas.Title>KINH THÁNH BD2011</Offcanvas.Title>
     </Offcanvas.Header>
     <Offcanvas.Body className="pt-0">
       <Alert variant="info" className="rounded-0">
@@ -64,7 +65,8 @@ const AboutPageMenu: React.FC<AboutPageMenuProps> = ({ open, onClose }) => (
 
 export default function App(): JSX.Element {
   const [showCanvas, setShowCanvas] = React.useState(false)
-  const [testament, setTestament] = React.useState<TestamentProps['testament']>('old-testament')
+  const [testament, setTestament] = React.useState<Testament>('old-testament')
+  const { data } = useBooks(testament)
   const openCanvas = () => setShowCanvas(true)
   const closeCanvas = () => setShowCanvas(false)
   const showOldTestament = () => setTestament('old-testament')
@@ -81,24 +83,24 @@ export default function App(): JSX.Element {
             active={showingOldTestament}
             disabled={showingOldTestament}
           >
-            Cựu Ước
+            CỰU ƯỚC
           </Nav.Link>
           <Nav.Link
             onClick={showNewTestament}
             active={showingNewTestament}
             disabled={showingNewTestament}
           >
-            Tân Ước
+            TÂN ƯỚC
           </Nav.Link>
         </Nav>
         <Nav className="ms-auto">
           <Nav.Link onClick={openCanvas} active={showingCanvas} disabled={showingCanvas}>
-            Kinh Thánh BD2011
+            KINH THÁNH BD2011
           </Nav.Link>
         </Nav>
       </Navbar>
       <div style={{ height: '56px' }}></div>
-      <Testament testament={testament} />
+      <Books books={data} />
       <AboutPageMenu open={showCanvas} onClose={closeCanvas} />
     </>
   )
