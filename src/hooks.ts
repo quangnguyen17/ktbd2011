@@ -19,19 +19,22 @@ export const getBook = async (filePath: string): Promise<Book> => {
 }
 
 export type Testament = keyof typeof dataSource
+
 export const getTestament = (testament: Testament) =>
   Promise.all(dataSource[testament].map((filePath) => getBook(filePath)))
 
-export const useBooks = (testament: Testament) => {
-  const [oldTestament, setOldTestament] = React.useState<Array<Book>>([])
-  const [newTestament, setNewTestament] = React.useState<Array<Book>>([])
+export const useNewTestament = (): Book[] => {
+  const [books, setBooks] = React.useState<Array<Book>>([])
   React.useEffect(() => {
-    getTestament('old-testament').then((t) => setOldTestament(t))
-    getTestament('new-testament').then((t) => setNewTestament(t))
+    getTestament('new-testament').then((data) => setBooks(data))
   }, [])
-  const data = React.useMemo<Book[]>(
-    () => (testament === 'old-testament' ? oldTestament : newTestament),
-    [testament, oldTestament, newTestament]
-  )
-  return { data, oldTestament, newTestament }
+  return books
+}
+
+export const useOldTestament = (): Book[] => {
+  const [books, setBooks] = React.useState<Array<Book>>([])
+  React.useEffect(() => {
+    getTestament('old-testament').then((t) => setBooks(t))
+  }, [])
+  return books
 }
