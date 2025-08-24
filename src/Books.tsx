@@ -1,15 +1,13 @@
 import { Accordion } from 'react-bootstrap'
 import { Book, Chapter } from './hooks'
 
-const generateUniqueKey = () => Math.round(Math.random() * 10000).toString()
-
 export default function Books({ books }: { books: Book[] }): JSX.Element {
-  const renderParagraphs = (paragraph: Chapter[]) => (
-    <div key={generateUniqueKey()}>
-      {Object.entries(paragraph).map(([key, val]) => (
-        <div key={generateUniqueKey()}>
+  const renderParagraphs = (paragraph: Chapter[], paragraphIndex: number) => (
+    <div key={paragraphIndex}>
+      {Object.entries(paragraph).map(([key, val], chapterIndex) => (
+        <div key={chapterIndex}>
           <h5 style={{ marginBottom: '0.75rem' }}>{key}</h5>
-          <p style={{ marginBottom: '0' }}>{val}</p>
+          <p style={{ marginBottom: '0' }}>{val as unknown as string}</p>
         </div>
       ))}
     </div>
@@ -18,9 +16,8 @@ export default function Books({ books }: { books: Book[] }): JSX.Element {
   const renderChapter = (data: Chapter, index: number) => {
     const count = index + 1
     const chapter: Array<Chapter[]> = data[count]
-    const key = generateUniqueKey()
     return (
-      <Accordion.Item key={key} eventKey={key} style={{ borderRadius: 0 }}>
+      <Accordion.Item key={index} eventKey={index.toString()} style={{ borderRadius: 0 }}>
         <Accordion.Header className="fw-bold">
           <span>Chương {count}</span>
         </Accordion.Header>
@@ -35,10 +32,9 @@ export default function Books({ books }: { books: Book[] }): JSX.Element {
 
   return (
     <Accordion>
-      {books.map((book: Book) => {
-        const key = generateUniqueKey()
+      {books.map((book: Book, index: number) => {
         return (
-          <Accordion.Item key={key} eventKey={key} style={{ borderRadius: 0 }}>
+          <Accordion.Item key={index} eventKey={index.toString()} style={{ borderRadius: 0 }}>
             <Accordion.Header>{book.title}</Accordion.Header>
             <Accordion.Body className="m-0 p-0">
               <Accordion flush>{book.chapters.map(renderChapter)}</Accordion>
