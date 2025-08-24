@@ -8,10 +8,10 @@ import './index.css'
 import { TabBar } from './TabBar'
 import { OldTestament } from './OldTestament'
 import { NewTestament } from './NewTestament'
-import { BD2011 } from './BD2011'
+import { Home } from './Home'
 
 const router = createBrowserRouter([
-  { path: '/', element: <BD2011 /> },
+  { path: '/', element: <Home /> },
   { path: '/cuu-uoc', element: <OldTestament /> },
   { path: '/tan-uoc', element: <NewTestament /> },
 ])

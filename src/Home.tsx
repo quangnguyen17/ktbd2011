@@ -1,4 +1,4 @@
-export const BD2011 = () => {
+export const Home = () => {
   return (
     <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
       <h1>KINH THÁNH BD2011</h1>
