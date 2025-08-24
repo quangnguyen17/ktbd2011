@@ -6,8 +6,8 @@ const generateUniqueKey = () => Math.round(Math.random() * 10000).toString()
 export default function Books({ books }: { books: Book[] }): JSX.Element {
   const renderParagraphs = (paragraph: Chapter[]) => (
     <div key={generateUniqueKey()}>
-      {Object.entries(paragraph).map(([key, val], verseIdx) => (
-        <div key={verseIdx}>
+      {Object.entries(paragraph).map(([key, val]) => (
+        <div key={generateUniqueKey()}>
           <h5 style={{ marginBottom: '0.75rem' }}>{key}</h5>
           <p style={{ marginBottom: '0' }}>{val}</p>
         </div>
