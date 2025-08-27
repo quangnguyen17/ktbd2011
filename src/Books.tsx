@@ -1,4 +1,4 @@
-import { Accordion } from 'react-bootstrap'
+import Accordion from 'react-bootstrap/Accordion'
 import { Book, Chapter } from './hooks'
 
 const renderParagraphs = (paragraph: Chapter[], paragraphIndex: number) => (

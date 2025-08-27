@@ -1,7 +1,8 @@
-import Books from './Books'
+import { Books } from './Books'
 import { useOldTestament } from './hooks'
 
 export const OldTestament = () => {
-  const books = useOldTestament()
-  return <Books books={books} />
+  const { data } = useOldTestament()
+  if (!data) return null
+  return <Books books={data} />
 }

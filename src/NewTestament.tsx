@@ -1,7 +1,8 @@
-import Books from './Books'
+import { Books } from './Books'
 import { useNewTestament } from './hooks'
 
 export const NewTestament = () => {
-  const books = useNewTestament()
-  return <Books books={books} />
+  const { data } = useNewTestament()
+  if (!data) return null
+  return <Books books={data} />
 }
