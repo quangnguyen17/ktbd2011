@@ -11,6 +11,9 @@ Live site: [https://ktbd2011.com/](https://ktbd2011.com/)
 - 🔍 Chapter and verse navigation
 - 📚 Bootstrap-based UI components
 - ⚡ Fast and efficient loading with Vite
+- 🔄 Smart data caching and background updates
+- 🚀 Optimized performance with React Query
+- 📥 Prefetching support for faster navigation
 
 ## Technology Stack
 
@@ -18,9 +21,27 @@ Live site: [https://ktbd2011.com/](https://ktbd2011.com/)
 - TypeScript
 - Vite
 - React Bootstrap
-- React Router
+- React Router v6
+- TanStack Query (React Query)
 - Firebase (hosting)
 - Axios for data fetching
+
+## Data Management
+
+### Caching Strategy
+
+- Implements a 5-minute cache refresh cycle
+- Background data updates while showing stale content
+- Smart prefetching for improved navigation
+- HTTP Cache-Control headers optimization
+
+### React Query Implementation
+
+- Automatic background updates
+- Type-safe query keys
+- Optimized data fetching
+- Built-in error handling
+- Loading state management
 
 ## Getting Started
 
@@ -86,9 +107,41 @@ ktbd2011/
 │   ├── OldTestament.tsx # Old Testament view
 │   ├── TabBar.tsx       # Navigation component
 │   ├── dataSource.ts    # Bible data source
-│   ├── hooks.ts         # Custom React hooks
-│   └── index.tsx        # Application entry point
+│   ├── hooks.ts         # React Query hooks and data fetching
+│   └── index.tsx        # Application entry point with Query Provider
 └── index.html      # HTML entry point
+```
+
+## Data Fetching Hooks
+
+### Available Hooks
+
+- `useBook(filePath)` - Fetch individual book data
+- `useNewTestament()` - Fetch all New Testament books
+- `useOldTestament()` - Fetch all Old Testament books
+- `usePrefetch()` - Utilities for data prefetching
+
+### Usage Example
+
+```typescript
+function BookView({ filePath }: { filePath: string }) {
+  const { data, isLoading } = useBook(filePath)
+  if (isLoading) return <div>Loading...</div>
+  return <div>{data.title}</div>
+}
+```
+
+### Prefetching Example
+
+```typescript
+function Navigation() {
+  const { prefetchTestament } = usePrefetch()
+  return (
+    <Link onMouseEnter={() => prefetchTestament('new-testament')} to="/new-testament">
+      New Testament
+    </Link>
+  )
+}
 ```
 
 ## Contributing
