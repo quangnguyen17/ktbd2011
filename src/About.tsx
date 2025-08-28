@@ -1,8 +1,10 @@
-export const Home = () => {
+import Card from 'react-bootstrap/Card'
+
+export const About = () => {
   return (
-    <div style={{ padding: '1rem' }}>
-      <h1>KINH THÁNH BD2011</h1>
-      <p>
+    <Card style={{ padding: '1rem' }}>
+      <Card.Title>KINH THÁNH BD2011</Card.Title>
+      <Card.Text>
         • Nếu các bạn muốn có trên iOS (như là iPhone, iPad,...) thì vui lòng tải xuống và sử dụng{' '}
         <a
           href="https://apps.apple.com/us/app/kinh-th%C3%A1nh-bd2011/id1405782410"
@@ -45,7 +47,7 @@ export const Home = () => {
         <a href="https://www.facebook.com/bau.dang" target="_blank" rel="noreferrer">
           Facebook
         </a>
-      </p>
-    </div>
+      </Card.Text>
+    </Card>
   )
 }

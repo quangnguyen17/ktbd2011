@@ -1,69 +1,70 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
+import { useQuery } from '@tanstack/react-query'
 import { dataSource } from './dataSource'
+import { LocalStorage } from './storage'
 
-const STORAGE_BASE_URL = `https://storage.googleapis.com/bd2011-d9afc.appspot.com/:filePath`
+const STORAGE_BASE_URL = `https://storage.googleapis.com/bd2011-d9afc.appspot.com`
+const REFRESH_INTERVAL = 5 * 60 * 1000 // 5 minutes in milliseconds
 
 export type Chapter = Record<string, any>
-export type Book = { title: string; chapters: Array<Chapter> }
+export type BookContent = { title: string; chapters: Array<Chapter> }
 
-// Query keys for type-safety and reusability
-export const QueryKeys = {
-  book: (filePath: string) => ['book', filePath] as const,
-  testament: (testament: Testament) => ['testament', testament] as const,
-} as const
+const fetchBookContent = async (testamentId: string, filename: string): Promise<BookContent> => {
+  // Always check local storage first
+  const cachedEntry = LocalStorage.getBook(testamentId, filename)
+  const hasValidCache = cachedEntry && LocalStorage.isCacheValid(cachedEntry.timestamp)
 
-const fetchBook = async (filePath: string): Promise<Book> => {
-  const { data } = await axios.get<Chapter>(
-    STORAGE_BASE_URL.replace(':filePath', encodeURIComponent(filePath))
-  )
-  const [title, chapters] = Object.entries(data)[0]
-  return { title, chapters }
-}
+  try {
+    if (!navigator.onLine) {
+      if (cachedEntry) {
+        return cachedEntry.content
+      }
+      throw new Error('Offline and no cached data available')
+    }
 
-const fetchTestament = async (testament: Testament): Promise<Book[]> => {
-  return Promise.all(dataSource[testament].map((filePath) => fetchBook(filePath)))
-}
+    // If online, fetch fresh data from network
+    const { data } = await axios.get<Chapter>(
+      `${STORAGE_BASE_URL}/${testamentId}/${filename}`,
+      { timeout: 5000 } // 5 second timeout
+    )
+    const [title, chapters] = Object.entries(data)[0]
+    const content = { title, chapters }
 
-export type Testament = keyof typeof dataSource
+    // Store in local storage for offline use
+    LocalStorage.setBook(testamentId, filename, content)
 
-export const useBook = (filePath: string) => {
-  return useQuery({
-    queryKey: QueryKeys.book(filePath),
-    queryFn: () => fetchBook(filePath),
-  })
-}
-
-export const useNewTestament = () => {
-  return useQuery({
-    queryKey: QueryKeys.testament('new-testament'),
-    queryFn: () => fetchTestament('new-testament'),
-  })
-}
-
-export const useOldTestament = () => {
-  return useQuery({
-    queryKey: QueryKeys.testament('old-testament'),
-    queryFn: () => fetchTestament('old-testament'),
-  })
-}
-
-// Prefetching utilities
-export const usePrefetch = () => {
-  const queryClient = useQueryClient()
-
-  return {
-    prefetchBook: (filePath: string) => {
-      return queryClient.prefetchQuery({
-        queryKey: QueryKeys.book(filePath),
-        queryFn: () => fetchBook(filePath),
-      })
-    },
-    prefetchTestament: (testament: Testament) => {
-      return queryClient.prefetchQuery({
-        queryKey: QueryKeys.testament(testament),
-        queryFn: () => fetchTestament(testament),
-      })
-    },
+    return content
+  } catch (error) {
+    // If network request fails but we have cached data, use it
+    if (cachedEntry) {
+      console.warn('Using cached data due to network error')
+      return cachedEntry.content
+    }
+    throw error
   }
+}
+
+export const useBook = (testamentId: string, filename: string) => {
+  return useQuery({
+    queryKey: ['book', testamentId, filename],
+    queryFn: () => fetchBookContent(testamentId, filename),
+    staleTime: REFRESH_INTERVAL,
+    gcTime: Infinity,
+    refetchInterval: REFRESH_INTERVAL,
+    retry: 2,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
+  })
+}
+
+export const useOldTestament = () => dataSource[0]
+export const useNewTestament = () => dataSource[1]
+
+// Hook to monitor online/offline status
+export const useOnlineStatus = () => {
+  return useQuery({
+    queryKey: ['online'],
+    queryFn: () => navigator.onLine,
+    refetchInterval: 10000, // Check every 10 seconds
+  })
 }
