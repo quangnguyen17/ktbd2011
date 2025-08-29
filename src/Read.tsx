@@ -1,6 +1,5 @@
 import Accordion from 'react-bootstrap/Accordion'
 import Button from 'react-bootstrap/Button'
-import CloseButton from 'react-bootstrap/CloseButton'
 import { Chapter, useBook, useOldTestament, useNewTestament } from './hooks'
 import type { Book } from './dataSource'
 import { useState } from 'react'
@@ -17,9 +16,7 @@ const ChapterModal = ({
   return (
     <div className="ChapterModal">
       <h1 className="Title">{title}</h1>
-      <div className="CloseButton">
-        <CloseButton onClick={onClose} />
-      </div>
+      <button className="Close" onClick={onClose}>{`X`}</button>
       {chapter.map((paragraph: Chapter[], paragraphIndex: number) => (
         <div key={paragraphIndex}>
           {Object.entries(paragraph).map(([key, val], chapterIndex) => (

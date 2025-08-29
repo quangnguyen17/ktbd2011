@@ -70,7 +70,7 @@ body,
   padding-right: calc(56px + 1rem);
 }
 
-.CloseButton {
+button.Close {
   position: fixed;
   top: 1rem;
   right: 1rem;
@@ -78,9 +78,13 @@ body,
   width: 56px;
   height: 56px;
   border-radius: 28px;
+  font-size: 20px;
+  line-height: 20px;
+  color: gray;
   display: flex;
   justify-content: center;
   align-items: center;
   box-shadow: 0px 10px 16px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+  border: none;
 }
